@@ -1,0 +1,22 @@
+
+@import '../../shared/shared.scss';
+
+.screen-preview {
+
+  &__section {
+    padding: 24px 0;
+
+    & + & {
+      padding-top: 0;
+    }
+  }
+
+  &__section-headline {
+    padding: 0 20px;
+    @extend %t-section;
+  }
+
+  &__field {
+    padding: 8px 20px 0;
+  }
+}

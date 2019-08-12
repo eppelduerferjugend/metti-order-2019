@@ -1,0 +1,39 @@
+
+@import '../../shared/shared.scss';
+
+.segmented-control {
+  display: flex;
+  flex-direction: row;
+
+  &__segment {
+    display: block;
+    flex-grow: 1;
+    flex-basis: 0;
+    line-height: 32px;
+    padding: 0 8px;
+    border: 1px solid $c-interactive;
+    text-align: center;
+    @extend %t-button;
+    color: $c-interactive;
+    user-select: none;
+
+    & + & {
+      border-left: none;
+    }
+
+    &:first-child {
+      border-top-left-radius: 6px;
+      border-bottom-left-radius: 6px;
+    }
+
+    &:last-child {
+      border-top-right-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
+
+    &--selected {
+      background: $c-interactive;
+      color: $c-white;
+    }
+  }
+}
