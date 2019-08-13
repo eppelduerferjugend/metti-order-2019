@@ -1,31 +1,42 @@
 
 const initialOrder = {
-  preview: false,
-  table: null,
-  waiter: null,
-  comment: null,
+  // Workflow step (order, preview, completion)
+  workflowStep: 'order',
+
+  // Order meta
+  table: '',
+  waiter: '',
+
+  // Object mapping item ids to quantities
   itemQuantities: {},
+
+  // Object mapping destination names to comment strings
   destinationComments: {},
+
+  // Destination selected in the order workflow step
   selectedDestination: null,
+
+  // Loading state in the completion workflow step
+  loading: false,
+  error: null,
 }
 
 export default function reducer (state = initialOrder, action) {
   switch (action.type) {
-    case 'ORDER_SET_PREVIEW': {
-      const order = Object.assign({}, state)
-      order.preview = action.preview
-      return order
+    case 'ORDER_CHANGE_WORKFLOW_STEP': {
+      return { ...state, workflowStep: action.workflowStep }
     }
 
     case 'ORDER_SELECT_DESTINATION': {
-      const order = Object.assign({}, state)
-      order.selectedDestination = action.destination
-      return order
+      return { ...state, selectedDestination: action.destination }
     }
 
     case 'ORDER_CHANGE_QUANTITY': {
-      const order = Object.assign({}, state)
+      const order = { ...state }
       const { id, quantity } = action
+
+      // Copy item quantities object
+      order.itemQuantities = { ...order.itemQuantities }
 
       if (quantity > 0) {
         order.itemQuantities[id] = quantity
@@ -37,8 +48,11 @@ export default function reducer (state = initialOrder, action) {
     }
 
     case 'ORDER_SET_DESTINATION_COMMENT': {
-      const order = Object.assign({}, state)
+      const order = { ...state }
       const { destination, comment } = action
+
+      // Copy destination comments object
+      order.destinationComments = { ...order.destinationComments }
 
       if (comment) {
         order.destinationComments[destination] = comment
@@ -50,21 +64,23 @@ export default function reducer (state = initialOrder, action) {
     }
 
     case 'ORDER_SET_TABLE': {
-      const order = Object.assign({}, state)
-      const { table } = action
-      order.table = table
-      return order
+      return { ...state, table: action.table }
     }
 
     case 'ORDER_SET_WAITER': {
-      const order = Object.assign({}, state)
-      const { waiter } = action
-      order.waiter = waiter
-      return order
+      return { ...state, waiter: action.waiter }
+    }
+
+    case 'ORDER_SET_LOADING': {
+      return { ...state, loading: action.loading, error: action.error }
     }
 
     case 'ORDER_RESET': {
-      return initialOrder
+      const order = Object.assign({}, initialOrder)
+      // Keep facts intact
+      order.selectedDestination = state.selectedDestination
+      order.waiter = state.waiter
+      return order
     }
 
     default: {

@@ -2,6 +2,7 @@
 import '../screen/screen.scss'
 import './screen-preview.scss'
 import * as actions from '../../actions'
+import Button from '../button/button'
 import FieldText from '../field-text/field-text'
 import Header from '../header/header'
 import ItemList from '../item-list/item-list'
@@ -10,20 +11,52 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 class ScreenPreview extends Component {
+  /**
+   * Returns item objects selected for the current order.
+   * @return {object[]}
+   */
+  getOrderItems () {
+    return this.props.items.filter(item =>
+      // Filter items for which a quantity is defined
+      this.props.order.itemQuantities[item.id] !== undefined)
+  }
+
+  /**
+   * Returns destination name strings selected for the current order.
+   * @return {string[]}
+   */
+  getDestinations () {
+    return this.getOrderItems()
+      // Map item objects to their respective destination name strings
+      .map(item => item.destination.name)
+      // Remove duplicate destination names
+      .filter((item, index, array) => array.indexOf(item) === index)
+  }
 
   render() {
-    const items = this.props.items
-      .filter(item => this.props.order.itemQuantities[item.id] !== undefined)
+    const items = this.getOrderItems()
+    const destinations = this.getDestinations()
 
-    const destinations = items
-        .map(item => item.destination.name)
-        .filter((item, index, array) => array.indexOf(item) === index)
+    // Verify order
+    let submitEnabled = true
+    let submitLabel = 'Bestellung opginn'
+
+    if (this.props.order.table.length < 2) {
+      submitEnabled = false
+      submitLabel = 'Dësch fehlt'
+    } else if (this.props.order.waiter.length < 2) {
+      submitEnabled = false
+      submitLabel = 'Serveur fehlt'
+    } else if (items.length === 0) {
+      submitEnabled = false
+      submitLabel = 'Näischt ausgewielt'
+    }
 
     return (
       <div className="screen screen-preview">
         <Header
           title="Metti"
-          onBackClick={() => this.props.setOrderPreview(false)} />
+          onBackClick={() => this.props.setOrderWorkflowStep('order')} />
         {destinations.map(destination => {
           const destinationItems = items.filter(
             item => item.destination.name === destination)
@@ -50,18 +83,24 @@ class ScreenPreview extends Component {
           <div className="screen-preview__field">
             <FieldText
               placeholder="Dësch"
-              value={this.props.order.table || ''}
+              value={this.props.order.table}
               onChange={this.props.setOrderTable} />
           </div>
         </div>
         <div className="screen-preview__section" key="waiter">
-          <h3 className="screen-preview__section-headline">Service</h3>
+          <h3 className="screen-preview__section-headline">Serveur</h3>
           <div className="screen-preview__field">
             <FieldText
-              placeholder="Service"
-              value={this.props.order.waiter || ''}
+              placeholder="Serveur"
+              value={this.props.order.waiter}
               onChange={this.props.setOrderWaiter} />
           </div>
+        </div>
+        <div className="screen-preview__submit">
+          <Button
+            label={submitLabel}
+            enabled={submitEnabled}
+            onClick={() => this.props.setOrderWorkflowStep('completion')} />
         </div>
       </div>
     )

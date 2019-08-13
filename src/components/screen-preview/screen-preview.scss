@@ -2,21 +2,25 @@
 @import '../../shared/shared.scss';
 
 .screen-preview {
+  padding-top: 24px;
 
   &__section {
-    padding: 24px 0;
 
     & + & {
-      padding-top: 0;
+      padding-top: 32px;
     }
   }
 
   &__section-headline {
     padding: 0 20px;
-    @extend %t-section;
+    @extend %t-h2;
   }
 
   &__field {
     padding: 8px 20px 0;
+  }
+
+  &__submit {
+    padding: 32px 20px 64px;
   }
 }

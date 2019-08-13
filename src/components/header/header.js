@@ -9,7 +9,11 @@ function Header(props) {
         {props.onBackClick ? (
           <button
             className="header__button"
-            onClick={props.onBackClick}
+            onClick={evt => {
+              // Scroll to top when using the header navigation
+              window.scrollTo(0, 0)
+              props.onBackClick(evt)
+            }}
             disabled={props.backEnabled === false}>
             {props.backLabel || 'Zeréck'}
           </button>
@@ -22,7 +26,11 @@ function Header(props) {
         {props.onDoneClick ? (
           <button
             className="header__button"
-            onClick={props.onDoneClick}
+            onClick={evt => {
+              // Scroll to top when using the header navigation
+              window.scrollTo(0, 0)
+              props.onDoneClick(evt)
+            }}
             disabled={props.doneEnabled === false}>
             {props.doneLabel || 'Fäerdeg'}
           </button>

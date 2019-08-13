@@ -1,12 +1,17 @@
 
+export const updateConfig = config => ({
+  type: 'CONFIG_UPDATE',
+  config,
+})
+
 export const updateItem = item => ({
   type: 'ITEM_UPDATE',
   item,
 })
 
-export const setOrderPreview = (preview) => ({
-  type: 'ORDER_SET_PREVIEW',
-  preview,
+export const setOrderWorkflowStep = (workflowStep) => ({
+  type: 'ORDER_CHANGE_WORKFLOW_STEP',
+  workflowStep,
 })
 
 export const changeOrderItemQuantity = (id, quantity) => ({
@@ -34,6 +39,12 @@ export const setOrderTable = (table) => ({
 export const setOrderWaiter = (waiter) => ({
   type: 'ORDER_SET_WAITER',
   waiter,
+})
+
+export const setOrderLoading = (loading, error) => ({
+  type: 'ORDER_SET_LOADING',
+  loading,
+  error,
 })
 
 export const resetOrder = () => ({

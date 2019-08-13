@@ -13,6 +13,13 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <div id="metti-root"></div>
+    <script id="metti-config" type="application/json">
+    {
+      "serviceEndpoint": "https://metti.spaghettisfest.lu/api",
+      "serviceUsername": "",
+      "servicePassword": ""
+    }
+    </script>
   </body>
 </html>

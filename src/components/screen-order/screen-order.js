@@ -11,7 +11,58 @@ import { connect } from 'react-redux'
 
 class ScreenOrder extends Component {
 
-  render() {
+  async fetchItems () {
+    const {
+      serviceEndpoint,
+      serviceUsername,
+      servicePassword,
+    } = this.props.config
+
+    // Try to fetch items
+    let response = null
+    try {
+      response = await fetch(`${serviceEndpoint}/item`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization':
+            `Basic ${btoa(`${serviceUsername}:${servicePassword}`)}`
+        }
+      })
+    } catch (err) {
+      // Networking error
+      alert(
+        "D'Kaart konnt net geluede ginn. " +
+        "W.e.g. Verbindung iwwerpréiwen a nei lueden.")
+      return
+    }
+
+    if (!response.ok) {
+      // Request error
+      alert("Server net verfügbar. W.e.g. Verantwortleche kontaktéieren.")
+      return
+    }
+
+    // Update each item received
+    const newItems = await response.json()
+    newItems.forEach(this.props.updateItem)
+
+    // Set initial destination to the first item's destination
+    if (this.props.items.length > 0 &&
+        this.props.order.selectedDestination === null) {
+      const firstDestination = this.props.items[0].destination.name
+      this.props.selectOrderDestination(firstDestination)
+    }
+  }
+
+  componentDidMount () {
+    if (this.props.items.length === 0) {
+      // Initial item fetch
+      this.fetchItems()
+    }
+  }
+
+  render () {
     const destinationNames =
       this.props.items
         .map(item => item.destination.name)
@@ -27,7 +78,7 @@ class ScreenOrder extends Component {
           title="Metti"
           doneLabel="Weider"
           doneEnabled={Object.keys(this.props.order.itemQuantities).length > 0}
-          onDoneClick={() => this.props.setOrderPreview(true)} />
+          onDoneClick={() => this.props.setOrderWorkflowStep('preview')} />
         <div className="screen-order__destinations">
           <SegmentedControl
             segments={destinationNames}

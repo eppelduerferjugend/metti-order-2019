@@ -1,45 +1,32 @@
 
-import React from 'react'
-import { render } from 'react-dom'
-import { Provider } from 'react-redux'
-import { createStore } from 'redux'
-import rootReducer from './reducers'
 import './index.scss'
-import App from './components/app/app'
 import * as serviceWorker from './serviceWorker'
-import { updateItem, selectOrderDestination } from './actions'
+import App from './components/app/app'
+import React from 'react'
+import rootReducer from './reducers'
+import { createStore } from 'redux'
+import { Provider } from 'react-redux'
+import { render } from 'react-dom'
+import { updateConfig } from './actions'
 
+// Bind elements
+const $root = document.getElementById('metti-root')
+const $config = document.getElementById('metti-config')
+
+// Create store
 const store = createStore(rootReducer)
 
+// Read config
+const config = JSON.parse($config.innerHTML)
+store.dispatch(updateConfig(config))
+
+// Render app
 render(
   <Provider store={store}>
     <App />
   </Provider>,
-  document.getElementById('root')
+  $root
 )
-
-const fetchItems = async () => {
-  const response = await fetch('https://metti.spaghettisfest.lu/api/item', {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-      'Authorization': `Basic ${btoa(`api:FPVPrLypWX2EoWVRBq6u`)}`
-    }
-  })
-
-  // Update each item received
-  const newItems = await response.json()
-  newItems.forEach(item => store.dispatch(updateItem(item)))
-
-  // Set initial destination to the first item's destination
-  const { items, order } = store.getState()
-  if (items.length > 0 && order.selectedDestination === null) {
-    const firstDestination = items[0].destination.name
-    store.dispatch(selectOrderDestination(firstDestination))
-  }
-}
-
-fetchItems()
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
