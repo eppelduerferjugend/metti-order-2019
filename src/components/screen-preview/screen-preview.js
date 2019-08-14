@@ -41,12 +41,15 @@ class ScreenPreview extends Component {
     let submitEnabled = true
     let submitLabel = 'Bestellung opginn'
 
-    if (this.props.order.table.length < 2) {
+    if (this.props.order.table.length === 0) {
       submitEnabled = false
       submitLabel = 'Dësch fehlt'
+    } else if (!this.props.order.table.match('^[A-Za-z][0-9]{1,2}$')) {
+      submitEnabled = false
+      submitLabel = 'Dësch falsch'
     } else if (this.props.order.waiter.length < 2) {
       submitEnabled = false
-      submitLabel = 'Serveur fehlt'
+      submitLabel = 'Serveur/euse fehlt'
     } else if (items.length === 0) {
       submitEnabled = false
       submitLabel = 'Näischt ausgewielt'
@@ -88,10 +91,10 @@ class ScreenPreview extends Component {
           </div>
         </div>
         <div className="screen-preview__section" key="waiter">
-          <h3 className="screen-preview__section-headline">Serveur</h3>
+          <h3 className="screen-preview__section-headline">Serveur/euse</h3>
           <div className="screen-preview__field">
             <FieldText
-              placeholder="Serveur"
+              placeholder="Serveur/euse"
               value={this.props.order.waiter}
               onChange={this.props.setOrderWaiter} />
           </div>
